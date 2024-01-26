@@ -1,5 +1,7 @@
 name: Send emails
-on: push
+on:
+  schedule:
+    - cron: '0 15 * * 2'
 
 jobs:
   fetch:
@@ -40,5 +42,5 @@ jobs:
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "Journal Club: Tue ${{env.NextTuesday}} 2pm-3pm. Moderator: ${{env.MODERATOR}}"
           body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/anchal-physics/SPJC/wiki\n"
-          to: guptaa@fusion.gat.com
+          to: ${{env.EMAILS}}
           from: SPJC Mailer
