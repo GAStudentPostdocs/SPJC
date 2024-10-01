@@ -29,12 +29,9 @@ jobs:
           echo "N2_MODERATOR=$(echo "$RESULTS" | jq -r --arg n2T "$(date '+%b %-d, %Y' -d "2 week next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n2T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
           echo "N3_MODERATOR=$(echo "$RESULTS" | jq -r --arg n3T "$(date '+%b %-d, %Y' -d "3 week next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n3T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
           echo "EMAILS=$(echo "$RESULTS" | jq -r '.results | .[1].result.rawData | .[] | .[0] ' | sed -e :a -e '$!N; s/\n/, /; ta')" >> $GITHUB_ENV
-      # - name: Read back into Github environment
-      #   run: |
-      #     echo $MODERATOR
-      #     echo $EMAILS
       - name: Send email
         uses: dawidd6/action-send-mail@v2
+        if: env.MODERATOR != 'break'
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -42,5 +39,17 @@ jobs:
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "Journal Club: Tue ${{env.NextTuesday}} 2pm-3pm. Moderator: ${{env.MODERATOR}}"
           body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/anchal-physics/SPJC/wiki\n"
+          to: ${{env.EMAILS}}
+          from: SPJC Mailer
+      - name: Send break notification
+        uses: dawidd6/action-send-mail@v2
+        if: env.MODERATOR == 'break'
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Journal Club: Tue ${{env.NextTuesday}} we are taking a break!"
+          body: "Hi all,\n\nNext journal club meeting on ${{env.NextTuesday}} will be skipped as we are taking a break.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/anchal-physics/SPJC/wiki\n"
           to: ${{env.EMAILS}}
           from: SPJC Mailer
