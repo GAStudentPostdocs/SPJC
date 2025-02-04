@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       test:
-        description: 'Is this a test? If yes, email will be sent to self only.'
+        description: 'Is this a test? If yes, email will be sent to self only. If not checked, email will go to the mailing list.'
         required: true
         type: boolean
 
@@ -35,9 +35,6 @@ jobs:
           echo "N2_MODERATOR=$(echo "$RESULTS" | jq -r --arg n2T "$(date '+%b %-d, %Y' -d "2 week next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n2T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
           echo "N3_MODERATOR=$(echo "$RESULTS" | jq -r --arg n3T "$(date '+%b %-d, %Y' -d "3 week next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n3T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
           echo "EMAILS=$(echo "$RESULTS" | jq -r '.results | .[1].result.rawData | .[] | .[0] ' | sed -e :a -e '$!N; s/\n/, /; ta')" >> $GITHUB_ENV
-      - run: |
-          echo "event_name=${{ github.event_name }}"
-          echo "Test=${{ inputs.test }}"
       - name: Send email
         uses: dawidd6/action-send-mail@v2
         if: env.MODERATOR != 'break' && (github.event_name == 'schedule' || !inputs.test)
@@ -64,7 +61,7 @@ jobs:
           from: SPJC Mailer
       - name: Send test
         uses: dawidd6/action-send-mail@v2
-        if: github.inputs.test
+        if: inputs.test
         with:
           server_address: smtp.gmail.com
           server_port: 465
