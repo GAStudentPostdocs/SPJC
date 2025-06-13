@@ -44,7 +44,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "Journal Club: Tue ${{env.NextTuesday}} 2pm-3pm. Moderator: ${{env.MODERATOR}}"
-          body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/anchal-physics/SPJC/wiki\n"
+          body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
           to: ${{env.EMAILS}}
           from: SPJC Mailer
       - name: Send break notification
@@ -56,7 +56,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "Journal Club: Tue ${{env.NextTuesday}} we are taking a break!"
-          body: "Hi all,\n\nNext journal club meeting on ${{env.NextTuesday}} will be skipped as we are taking a break.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/anchal-physics/SPJC/wiki\n"
+          body: "Hi all,\n\nNext journal club meeting on ${{env.NextTuesday}} will be skipped as we are taking a break.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
           to: ${{env.EMAILS}}
           from: SPJC Mailer
       - name: Send test
@@ -68,6 +68,6 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "TEST EMAIL: Journal Club: Tue ${{env.NextTuesday}} 2pm-3pm. Moderator: ${{env.MODERATOR}}"
-          body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/anchal-physics/SPJC/wiki\n"
+          body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
           to: ${{ secrets.MAIL_USERNAME }}
           from: SPJC Mailer
