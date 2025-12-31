@@ -29,11 +29,16 @@ jobs:
         env:
           RESULTS: ${{ steps.read_worksheet.outputs.results }}
         run: |
+          ANCHOR_DATE="2026-01-13"
+          WEEKS_SINCE=$(( ( $(date -d "next tuesday" +%s) - $(date -d "$ANCHOR_DATE" +%s) ) / 604800 ))
+          if (( WEEKS_SINCE % 2 != 0 )); then
+            echo "Off-week — skipping biweekly run"
+            exit 0
+          fi
           echo "NextTuesday=$(date '+%b %-d' -d "next tuesday")" >> $GITHUB_ENV
           echo "MODERATOR=$(echo "$RESULTS" | jq -r --arg nT "$(date '+%b %-d, %Y' -d "next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$nT) | .[1]')" >> $GITHUB_ENV
-          echo "N1_MODERATOR=$(echo "$RESULTS" | jq -r --arg n1T "$(date '+%b %-d, %Y' -d "1 week next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n1T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
-          echo "N2_MODERATOR=$(echo "$RESULTS" | jq -r --arg n2T "$(date '+%b %-d, %Y' -d "2 week next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n2T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
-          echo "N3_MODERATOR=$(echo "$RESULTS" | jq -r --arg n3T "$(date '+%b %-d, %Y' -d "3 week next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n3T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
+          echo "N1_MODERATOR=$(echo "$RESULTS" | jq -r --arg n1T "$(date '+%b %-d, %Y' -d "2 weeks next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n1T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
+          echo "N2_MODERATOR=$(echo "$RESULTS" | jq -r --arg n2T "$(date '+%b %-d, %Y' -d "4 weeks next tuesday")" '.results | .[0].result.rawData | .[] | select(.[0]==$n2T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
           echo "EMAILS=$(echo "$RESULTS" | jq -r '.results | .[1].result.rawData | .[] | .[0] ' | sed -e :a -e '$!N; s/\n/, /; ta')" >> $GITHUB_ENV
       - name: Send email
         uses: dawidd6/action-send-mail@v2
@@ -44,7 +49,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "Journal Club: Tue ${{env.NextTuesday}} 2pm-3pm. Moderator: ${{env.MODERATOR}}"
-          body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\nPlease note that we have now switched to biweekly meetings.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
+          body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\nPlease note that we have now switched to biweekly meetings.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
           to: ${{env.EMAILS}}
           from: SPJC Mailer
       - name: Send break notification
@@ -56,7 +61,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "Journal Club: Tue ${{env.NextTuesday}} we are taking a break!"
-          body: "Hi all,\n\nNext journal club meeting on ${{env.NextTuesday}} will be skipped as we are taking a break.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
+          body: "Hi all,\n\nNext journal club meeting on ${{env.NextTuesday}} will be skipped as we are taking a break.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
           to: ${{env.EMAILS}}
           from: SPJC Mailer
       - name: Send test
@@ -68,6 +73,6 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "TEST EMAIL: Journal Club: Tue ${{env.NextTuesday}} 2pm-3pm. Moderator: ${{env.MODERATOR}}"
-          body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n${{env.N3_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
+          body: "Hi all,\n\nNext journal club meeting is on ${{env.NextTuesday}} from 2pm to 3pm. The next scheduled moderator, ${{env.MODERATOR}}, please select a paper and reply all to this email by Thursday.\n\nNext moderators:\n${{env.N1_MODERATOR}}\n${{env.N2_MODERATOR}}\n\nPlease exchange turns if you can not make it to the week you are scheduled to be the moderator.\n\n${{secrets.ZOOM_DETAILS}}\n\nThanks,\nSPJC Mailer\n\nP.S. For more information: https://github.com/GAStudentPostdocs/SPJC/wiki\n"
           to: ${{ secrets.MAIL_USERNAME }}
           from: SPJC Mailer
