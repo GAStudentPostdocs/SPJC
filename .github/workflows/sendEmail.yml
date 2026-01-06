@@ -38,10 +38,10 @@ jobs:
           NEXT_TUESDAY=$(date -d "next tuesday" +%Y-%m-%d)
           N1_TUESDAY=$(date -d "2 weeks next tuesday" +%Y-%m-%d)
           N2_TUESDAY=$(date -d "4 weeks next tuesday" +%Y-%m-%d)
-          echo "NextTuesday=NEXT_TUESDAY" >> $GITHUB_ENV
-          echo "MODERATOR=$(echo "$RESULTS" | jq -r --arg nT "NEXT_TUESDAY" '.results | .[0].result.rawData | .[] | select(.[0]==$nT) | .[1]')" >> $GITHUB_ENV
-          echo "N1_MODERATOR=$(echo "$RESULTS" | jq -r --arg n1T "N1_TUESDAY" '.results | .[0].result.rawData | .[] | select(.[0]==$n1T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
-          echo "N2_MODERATOR=$(echo "$RESULTS" | jq -r --arg n2T "N2_TUESDAY" '.results | .[0].result.rawData | .[] | select(.[0]==$n2T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
+          echo "NextTuesday=$NEXT_TUESDAY" >> $GITHUB_ENV
+          echo "MODERATOR=$(echo "$RESULTS" | jq -r --arg nT "$NEXT_TUESDAY" '.results | .[0].result.rawData | .[] | select(.[0]==$nT) | .[1]')" >> $GITHUB_ENV
+          echo "N1_MODERATOR=$(echo "$RESULTS" | jq -r --arg n1T "$N1_TUESDAY" '.results | .[0].result.rawData | .[] | select(.[0]==$n1T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
+          echo "N2_MODERATOR=$(echo "$RESULTS" | jq -r --arg n2T "$N2_TUESDAY" '.results | .[0].result.rawData | .[] | select(.[0]==$n2T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
           echo "EMAILS=$(echo "$RESULTS" | jq -r '.results | .[1].result.rawData | .[] | .[0] ' | sed -e :a -e '$!N; s/\n/, /; ta')" >> $GITHUB_ENV
       - name: Send email
         uses: dawidd6/action-send-mail@v2
