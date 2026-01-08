@@ -43,6 +43,13 @@ jobs:
           echo "N1_MODERATOR=$(echo "$RESULTS" | jq -r --arg n1T "$N1_TUESDAY" '.results | .[0].result.rawData | .[] | select(.[0]==$n1T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
           echo "N2_MODERATOR=$(echo "$RESULTS" | jq -r --arg n2T "$N2_TUESDAY" '.results | .[0].result.rawData | .[] | select(.[0]==$n2T) | "\(.[0])    \(.[1])"')" >> $GITHUB_ENV
           echo "EMAILS=$(echo "$RESULTS" | jq -r '.results | .[1].result.rawData | .[] | .[0] ' | sed -e :a -e '$!N; s/\n/, /; ta')" >> $GITHUB_ENV
+      - name: Debug moderator lookup
+        if: github.event_name == 'workflow_dispatch' && inputs.test
+        run: |
+          echo "NEXT_TUESDAY=$NEXT_TUESDAY"
+          echo "MODERATOR=$MODERATOR"
+          echo "Raw schedule data:"
+          echo "$RESULTS" | jq '.results[0].result.rawData'
       - name: Send email
         uses: dawidd6/action-send-mail@v2
         if: env.MODERATOR != 'break' && (github.event_name == 'schedule' || !inputs.test)
